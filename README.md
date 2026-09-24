@@ -1,56 +1,64 @@
-# Welcome to your Expo app 👋
+# Comedor IPF - TP2 React Native y Expo Router
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Este es el proyecto del Trabajo Práctico N° 2 sobre Expo Router, correspondiente al Comedor del Instituto Politécnico Formosa.
 
-## Get started
+## Árbol de carpetas de `src/app` y navegadores
 
-1. Install dependencies
-
-   ```bash
-   npm install
-   ```
-
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
-
-```bash
-npm run reset-project
+```text
+src/app
+│
+├── _layout.tsx                 (Stack raíz con Stack.Protected)
+├── +not-found.tsx              (Pantalla 404)
+├── buscar.tsx                  (Pantalla)
+├── confirmar.tsx               (Pantalla modal)
+├── login.tsx                   (Pantalla modal - Protegida)
+├── pedido.tsx                  (Redirección)
+│
+├── (tabs)                      (Tabs Navigator)
+│   ├── _layout.tsx             (Layout del Tabs)
+│   ├── index.tsx               (Pantalla Inicio)
+│   ├── carrito
+│   │   ├── _layout.tsx         (Stack)
+│   │   ├── index.tsx           (Pantalla)
+│   │   └── nota.tsx            (Pantalla)
+│   └── menu
+│       ├── _layout.tsx         (Stack)
+│       ├── index.tsx           (Pantalla)
+│       └── [id].tsx            (Pantalla dinámica)
+│
+├── (cocina)                    (Drawer Navigator - Protegida)
+│   ├── _layout.tsx             (Layout del Drawer)
+│   ├── cocina.tsx              (Pantalla)
+│   └── atendidos.tsx           (Pantalla)
+│
+├── ayuda                       (Stack por defecto, heredado)
+│   ├── index.tsx               (Pantalla)
+│   └── [...slug].tsx           (Pantalla dinámica catch-all)
+│
+└── categorias
+    └── [categoria].tsx         (Pantalla dinámica)
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+## Justificación de `replace` vs `push` en la confirmación
 
-### Other setup steps
+En la pantalla de confirmación (`/confirmar`), al finalizar el pedido, se utiliza `router.replace('/turno/[numero]')` en lugar de `router.push`. 
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+La razón es simple: si usáramos `push`, la pantalla de confirmación quedaría en la pila de historial debajo de la pantalla del turno. Si el usuario luego presionara el botón de "atrás" (back), volvería a la pantalla de confirmación de un pedido que ya fue procesado, generando confusión y posibles estados inválidos en la app. Al utilizar `replace`, sustituimos la pantalla actual (confirmación) por la nueva (turno) en el tope de la pila. Así, si el usuario vuelve atrás, retornará directamente a la pantalla anterior a la confirmación (el carrito o el inicio, según corresponda), lo cual es el comportamiento correcto y esperado.
 
-## Learn more
+## Capturas y Videos
+*(Nota: Las capturas o videos se adjuntarían aquí en un escenario real)*
+- Carrito con deshacer
+- Turno
+- Cocina atendiendo pedidos
+- Login / Logout
+- Pantalla 404
 
-To learn more about developing your project with Expo, look at the following resources:
+## Deep Link de prueba en Expo Go
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+Para abrir directamente el detalle del plato 7 usando Expo Go en el entorno de desarrollo (suponiendo que la IP sea 192.168.1.20 y el puerto 8081):
 
-## Join the community
+```text
+exp://192.168.1.20:8081/--/menu/7
+```
 
-Join our community of developers creating universal apps.
-
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+*(Asegurarse de reemplazar la IP por la IP correspondiente mostrada en la terminal al ejecutar `npx expo start`)*.
